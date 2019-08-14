@@ -3,6 +3,7 @@ import model
 
 
 cell_size = 5
+global root, grid_view, start_button, clear_button, choice
 
 
 def setup():
@@ -30,6 +31,34 @@ def setup():
     option.grid(row=1, column=1, padx=20, pady=20)
 
 
+def update():
+    global grid_view
+
+    grid_view.delete(ALL)
+
+    model.next_gen()
+    for i in range(model.height):
+        for j in range(model.width):
+            if model.grid_model[i][j] == 1:
+                draw_cell(i, j, 'black')
+
+
+def draw_cell(row, col, color):
+    global grid_view, cell_size
+
+    if color == 'black':
+        outline = 'gray'
+    else:
+        outline = 'white'
+
+    grid_view.create_rectangle(row*cell_size,
+                               col*cell_size,
+                               row*cell_size+cell_size,
+                               col*cell_size+cell_size,
+                               fill=color, outline=outline)
+
+
 if __name__ == '__main__':
     setup()
+    update()
     mainloop()
