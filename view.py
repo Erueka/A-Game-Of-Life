@@ -18,6 +18,7 @@ def setup():
                        borderwidth=0,
                        highlightthickness=0,
                        bg='white')
+    grid_view.bind('<Button-1>', grid_handler)
 
     start_button = Button(root, text='Start', width=12)
     start_button.bind('<Button-1>', start_handler)
@@ -27,6 +28,8 @@ def setup():
     choice = StringVar(root)
     choice.set('Choose a Pattern')
     option = OptionMenu(root, choice, 'Choose a Pattern', 'glider', 'glider gun', 'random')
+    option.config(width=20)
+    option.bind('<Button-1>', option_handler)
 
     grid_view.grid(row=0, columnspan=3, padx=20, pady=20)
     start_button.grid(row=1, column=0, sticky=W, padx=20, pady=20)
@@ -47,7 +50,7 @@ def start_handler(event):
 
 
 def clear_handler(event):
-    # TODO 有bug，要保证clear后仍能重新开始。
+    # 预设的图案还未添加
     global grid_view, is_running
 
     is_running = False
@@ -58,6 +61,34 @@ def clear_handler(event):
             model.grid_model[i][j] = 0
 
     start_button.config(text='Start')
+
+    update()
+
+
+def grid_handler(event):
+    global grid_view, cell_size
+
+    x = int(event.x / cell_size)
+    y = int(event.y / cell_size)
+
+    if model.grid_model[x][y]:
+        model.grid_model[x][y] = 0
+        draw_cell(x, y, 'white')
+    else:
+        model.grid_model[x][y] = 1
+        draw_cell(x, y, 'black')
+
+
+def option_handler(event):
+    global is_running, start_button, choice
+
+    is_running = False
+    start_button.config(text='Start')
+
+    option = choice.get()
+
+    if option == 'random':
+        model.randomize(model.grid_model, model.width, model.height)
 
     update()
 
@@ -74,7 +105,7 @@ def update():
                 draw_cell(i, j, 'black')
 
     if is_running:
-        root.after(1000, update)
+        root.after(300, update)
 
 
 def draw_cell(row, col, color):

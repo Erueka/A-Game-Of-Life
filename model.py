@@ -18,7 +18,7 @@ for i in range(height):
     next_grid_model[i] = [0] * width
 
 
-randomize(grid_model, width, height)
+# randomize(grid_model, width, height)
 
 
 def next_gen():
